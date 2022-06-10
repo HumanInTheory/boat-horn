@@ -9,9 +9,9 @@ NoiseController::NoiseController(int _devicePin) : devicePin(_devicePin) {
 NoiseController::~NoiseController() {}
 
 void NoiseController::activate() {
-	digitalWrite(devicePin, HIGH);
+	tone(devicePin, 440);
 }
 
 void NoiseController::silence() {
-	digitalWrite(devicePin, LOW);
+	noTone(devicePin);
 }

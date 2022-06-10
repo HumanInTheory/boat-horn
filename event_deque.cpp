@@ -1,34 +1,34 @@
-#include "action_deque.hpp"
+#include "event_deque.hpp"
 
 #include <Arduino.h>
 
 // Creates an ActionDeque with NULL references and a size of zero
-ActionDeque::ActionDeque() {
+EventDeque::EventDeque() {
   front = rear = NULL;
   dequeSize = 0;
 }
 
 // Erases every ActionNode before destructing
-ActionDeque::~ActionDeque() {
+EventDeque::~EventDeque() {
   erase();
 }
 
-bool ActionDeque::isEmpty() {
+bool EventDeque::isEmpty() {
   return ( front == NULL );
 }
 
-int ActionDeque::size() {
+int EventDeque::size() {
   return dequeSize;
 }
 
 // Inserts a new node based on data into the front
-void ActionDeque::insertFront( unsigned int decisecondsToPerform, Action action ) {
+void EventDeque::insertFront( unsigned int offsetDS, Event event ) {
   // Create node
-  ActionNode* newNode = new ActionNode();
-  newNode->decisecondsToPerform = decisecondsToPerform;
-  newNode->action = action;
+  EventNode* newNode = new EventNode();
+  newNode->offsetDS = offsetDS;
+  newNode->event = event;
 
-  // Define front and rear pointers if ActionDeque is empty
+  // Define front and rear pointers if EventDeque is empty
   // Otherwise make new node front and set its next reference to the previous front
   if ( isEmpty() ) {
     front = rear = newNode;
@@ -43,13 +43,13 @@ void ActionDeque::insertFront( unsigned int decisecondsToPerform, Action action 
 }
 
 // Inserts a new node based on data into the rear
-void ActionDeque::insertRear( unsigned int decisecondsToPerform, Action action ) {
+void EventDeque::insertRear( unsigned int offsetDS, Event event ) {
   // Create node
-  ActionNode* newNode = new ActionNode();
-  newNode->decisecondsToPerform = decisecondsToPerform;
-  newNode->action = action;
+  EventNode* newNode = new EventNode();
+  newNode->offsetDS = offsetDS;
+  newNode->event = event;
 
-  // Define front and rear pointers if ActionDeque is empty
+  // Define front and rear pointers if EventDeque is empty
   // Otherwise make new node rear and set its prev reference to the previous rear
   if ( isEmpty() ) {
     front = rear = newNode;
@@ -64,9 +64,9 @@ void ActionDeque::insertRear( unsigned int decisecondsToPerform, Action action )
 }
 
 // Deletes the node refenced by front, replacing the reference with the next node
-void ActionDeque::deleteFront() {
+void EventDeque::deleteFront() {
   if ( !isEmpty() ) {
-    ActionNode* temp = front;
+    EventNode* temp = front;
     front = front->next;
 
     // If only 1 node present
@@ -84,9 +84,9 @@ void ActionDeque::deleteFront() {
 }
 
 // Deletes the node refenced by rear, replacing the reference with the prev node
-void ActionDeque::deleteRear() {
+void EventDeque::deleteRear() {
   if ( !isEmpty() ) {
-    ActionNode* temp = rear;
+    EventNode* temp = rear;
     rear = rear->prev;
 
     // If only 1 node present
@@ -104,51 +104,21 @@ void ActionDeque::deleteRear() {
 }
 
 // Returns the time offset of the front action in deciseconds
-unsigned int ActionDeque::getFrontTime() {
-  if( isEmpty() ) {
-    return -1;
-  }
-  else {
-    return front->decisecondsToPerform;
-  }
+EventNode* EventDeque::getFront() {
+  return front;
 }
 
 // Returns the time offset of the rear action in deciseconds
-unsigned int ActionDeque::getRearTime() {
-  if( isEmpty() ) {
-    return -1;
-  }
-  else {
-    return rear->decisecondsToPerform;
-  }
-}
-
-// Returns the enum of the front action
-Action ActionDeque::getFrontAction() {
-  if( isEmpty() ) {
-    return Action::NONE;
-  }
-  else {
-    return front->action;
-  }
-}
-
-// Returns the enum of the rear action
-Action ActionDeque::getRearAction() {
-  if( isEmpty() ) {
-    return Action::NONE;
-  }
-  else {
-    return rear->action;
-  }
+EventNode* EventDeque::getRear() {
+  return rear;
 }
 
 // Iterates through the list, deleting each ActionNode
-void ActionDeque::erase() {
+void EventDeque::erase() {
   rear = NULL;
 
   while ( front != NULL ) {
-    ActionNode* temp = front;
+    EventNode* temp = front;
     front = front->next;
     delete front;
   }
